@@ -11,6 +11,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
@@ -59,10 +60,12 @@ public class RegViwer extends Composite {
 	private int eCount = 0;
 
 	private Rectangle[] btnBounds = {
-			new Rectangle(0, 0, 80, 26),
-			new Rectangle(82, 0, 80, 26),
-			new Rectangle(164, 0, 80, 26)
+			new Rectangle(0, 0, 40, 32),
+			new Rectangle(40, 0, 40, 32),
+			new Rectangle(80, 0, 40, 32)
 	};
+	private ToolBar toolBarClose;
+	private ToolItem tbtClose;
 	/**
 	 * Create the composite.
 	 * @param parent
@@ -74,20 +77,20 @@ public class RegViwer extends Composite {
 		gridLayout.horizontalSpacing = 1;
 		setLayout(gridLayout);
 		composite_1 = new Composite(this, SWT.NONE);
-		composite_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
+		composite_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 3, 1));
 		btnIns = new Button(composite_1, SWT.NONE);
 		btnIns.setVisible(true);
-		btnIns.setText("Inserir");
+		btnIns.setToolTipText("Inserir");
 		btnIns.setImage(SWTResourceManager.getImage(RegViwer.class, "/icon/insert.png"));
 		btnIns.setBounds(btnBounds[0]);
 		btnEdt = new Button(composite_1, SWT.NONE);
 		btnEdt.setVisible(true);
-		btnEdt.setText("Editar");
+		btnEdt.setToolTipText("Editar");
 		btnEdt.setImage(SWTResourceManager.getImage(RegViwer.class, "/icon/edit.png"));
 		btnEdt.setBounds(btnBounds[1]);
 		btnDel = new Button(composite_1, SWT.NONE);
 		btnDel.setVisible(true);
-		btnDel.setText("Excluir");
+		btnDel.setToolTipText("Excluir");
 		btnDel.setImage(SWTResourceManager.getImage(RegViwer.class, "/icon/delete.png"));
 		btnDel.setBounds(btnBounds[2]);
 		lblPerodo = new Label(this, SWT.NONE);
@@ -95,20 +98,20 @@ public class RegViwer extends Composite {
 		lblPerodo.setText(" Período: ");
 		dtIni = new DateTime(this, SWT.BORDER | SWT.SHORT);
 		dtIni.setDay(1);
-		GridData gd_dtIni = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_dtIni.widthHint = 130;
+		GridData gd_dtIni = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+		gd_dtIni.widthHint = 100;
 		dtIni.setLayoutData(gd_dtIni);
 		lblAt = new Label(this, SWT.NONE);
 		lblAt.setText(" até ");
 		dtFim = new DateTime(this, SWT.BORDER | SWT.SHORT);
-		GridData gd_dtFim = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		GridData gd_dtFim = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
 		gd_dtFim.widthHint = 130;
 		dtFim.setLayoutData(gd_dtFim);
 		lblBusca = new Label(this, SWT.NONE);
 		lblBusca.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblBusca.setText(" Busca:");
 		text = new Text(this, SWT.BORDER);
-		GridData gd_text = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+		GridData gd_text = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
 		gd_text.widthHint = 150;
 		text.setLayoutData(gd_text);
 		toolBar = new ToolBar(this, SWT.FLAT | SWT.RIGHT);
@@ -117,13 +120,30 @@ public class RegViwer extends Composite {
 		table = new DataViwer(this, SWT.BORDER);
 		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 10, 1));
 		Composite composite = new Composite(this, SWT.NONE);
-		composite.setLayout(new GridLayout(1, false));
+		composite.setLayout(new GridLayout(2, false));
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 10, 1));
 		lblError = new Label(composite, SWT.NONE);
 		lblError.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
 		lblError.setVisible(false);
 		lblError.setText("Nenhum registro encontrado!");
+		toolBarClose = new ToolBar(composite, SWT.FLAT | SWT.RIGHT);
+		toolBarClose.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1));
+		tbtClose = new ToolItem(toolBarClose, SWT.NONE);
+		tbtClose.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				Composite parent = getParent();
+				dispose();
+				parent.dispose();
+				
+			}
+		});
+		tbtClose.setText("x");
 		popUp = new Menu(getShell(), SWT.POP_UP);
+	}
+	
+	public void setCloseVisible(boolean visible){
+		toolBarClose.setVisible(visible);
 	}
 
 	public void open(){
@@ -313,6 +333,10 @@ public class RegViwer extends Composite {
 		if (object != null)
 			table.set(index, object);
 	}
+	
+	public Object getSelection(){
+		return table.getSelection();
+	}
 
 	private void actDelete(){
 		if (deleteListener == null)
@@ -354,4 +378,13 @@ public class RegViwer extends Composite {
 		this.index = index;
 	}
 
+	public void setIcons(Image[] icons){
+		if (icons.length != 4)
+			throw new RuntimeException();
+		btnIns.setImage(icons[0]);
+		btnEdt.setImage(icons[1]);
+		btnDel.setImage(icons[2]);
+		btnFind.setImage(icons[3]);
+	}
+	
 }

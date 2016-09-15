@@ -1,11 +1,25 @@
 package swt.cw;
 
 
+
+import java.security.acl.Group;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CBanner;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.Text;
 
 import swt.cw.util.Format;
@@ -173,4 +187,31 @@ public class Customizer {
 		}
 		return builder.toString();
 	}
+	
+	private static boolean isComposite(Control control){
+		Class<?>[] composites = {Shell.class, Composite.class, Group.class, SashForm.class,
+				ScrolledComposite.class, TabFolder.class, CTabFolder.class, ViewForm.class, CBanner.class};
+		for (Class<?> c : composites) {
+			if (control.getClass().equals(c))
+				return true;
+		}
+		return false;
+	}
+	/**
+	 * Adiciona um listener quando qualquer campo for alterado em um formulário
+	 * @param listener
+	 */
+	public static void addModifyListener(Composite composite, Listener listener){
+		Control[] controls = composite.getChildren();
+		for (Control control : controls) {
+			if (isComposite(control)){
+				Composite composite2 = (Composite)control;
+				addModifyListener(composite2, listener);
+			}else{
+				control.addListener(SWT.Selection, listener);
+				control.addListener(SWT.Modify, listener);
+			}
+		}
+	}
+	
 }

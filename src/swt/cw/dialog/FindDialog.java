@@ -83,7 +83,7 @@ public class FindDialog extends Dialog {
 	 */
 	private void createContents() {
 		shell = new Shell(getParent(), getStyle());
-		shell.setSize(474, 300);
+		shell.setSize(518, 317);
 		GridLayout gl_shell = new GridLayout(1, false);
 		gl_shell.horizontalSpacing = 0;
 		shell.setLayout(gl_shell);
@@ -110,26 +110,18 @@ public class FindDialog extends Dialog {
 		lblErro.setText("Nenhum registro encontrado!");
 		btnIns = new Button(composite_1, SWT.NONE);
 		btnIns.setImage(SWTResourceManager.getImage(FindDialog.class, "/icon/insert.png"));
-		GridData gd_btnInserir = new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1);
-		gd_btnInserir.widthHint = 90;
-		btnIns.setLayoutData(gd_btnInserir);
-		btnIns.setText("Inserir");
+		btnIns.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1));
+		btnIns.setToolTipText("Inserir");
 		btnSel = new Button(composite_1, SWT.NONE);
 		btnSel.setImage(SWTResourceManager.getImage(FindDialog.class, "/icon/accept.png"));
-		GridData gd_btnSelecionar = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_btnSelecionar.widthHint = 90;
-		btnSel.setLayoutData(gd_btnSelecionar);
-		btnSel.setText("Selecionar");
+		btnSel.setToolTipText("Selecionar");
 		btnCancel = new Button(composite_1, SWT.NONE);
 		btnCancel.setImage(SWTResourceManager.getImage(FindDialog.class, "/icon/cancel.png"));
-		GridData gd_btnCancelar = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_btnCancelar.widthHint = 90;
-		btnCancel.setLayoutData(gd_btnCancelar);
-		btnCancel.setText("Cancelar");
+		btnCancel.setToolTipText("Cancelar");
 		lblErro.setVisible(false);
 		btnIns.setVisible(false);
 		popUp = new Menu(shell,SWT.POP_UP);
-		Screen.centralize(shell);
+		Screen.centralize(shell, getParent());
 	}
 	
 	private void initialize(){
@@ -179,6 +171,12 @@ public class FindDialog extends Dialog {
 				btnSel.setEnabled(table.checkSelection(new Point(arg0.x, arg0.y)));
 			}
 		});
+		table.addListener(SWT.Selection,  new Listener() {
+			@Override
+			public void handleEvent(Event arg0) {
+				btnSel.setEnabled(table.getSelectionIndex() >= 0);
+			}
+		});
 		btnCancel.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
@@ -190,6 +188,8 @@ public class FindDialog extends Dialog {
 			public void keyPressed(KeyEvent arg0) {
 				if (arg0.keyCode == SWT.CR || arg0.keyCode == SWT.KEYPAD_CR)
 					find();
+				else if (arg0.keyCode == SWT.ARROW_DOWN && !table.isEmpty())
+					table.setFocus();
 			}
 		});
 		text.addModifyListener(new ModifyListener() {
@@ -208,6 +208,13 @@ public class FindDialog extends Dialog {
 						shell.close();
 					}
 				}
+			}
+		});
+		table.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				if (arg0.keyCode == SWT.CR || arg0.keyCode == SWT.KEYPAD_CR)
+					select();
 			}
 		});
 		btnSel.setEnabled(false);
@@ -259,6 +266,7 @@ public class FindDialog extends Dialog {
 		List<?> data = source.getList(index, text.getText()); 
 		table.setData(data);
 		lblErro.setVisible(data.size() == 0);
+		
 	}
 	
 	public void select(){
@@ -288,7 +296,20 @@ public class FindDialog extends Dialog {
 	public void setCancelIcon(Image image){
 		btnCancel.setImage(image);
 	}
+	public void setIcons(Image[] icons){
+		if (icons.length != 4)
+			throw new RuntimeException("Numero de ícones != 4");
+		btnFind.setImage(icons[0]);
+		btnIns.setImage(icons[1]);
+		btnSel.setImage(icons[2]);
+		btnCancel.setImage(icons[3]);
+	}
 	public void setImage(Image image){
 		shell.setImage(image);
 	}
+	
+	public void setFindText(String text){
+		this.text.setText(text);
+	}
+	
 }

@@ -219,13 +219,13 @@ public class DataViwer extends Composite {
 
 	public void addColumn(String fieldName, String displayName, String pattern){
 		if (fieldName == null || fieldName.isEmpty())
-			throw new UnsupportedOperationException("Invalid field name!");
+			throw new RuntimeException("Invalid field name!");
 		if (displayName == null || displayName.isEmpty())
-			throw new UnsupportedOperationException("Invalid display name!");
+			throw new RuntimeException("Invalid display name!");
 		if (fieldName.contains(".")){
 			String[] fns = fieldName.split("[.]");
 			if (fns.length < 2)
-				throw new UnsupportedOperationException("Invalid field name!");
+				throw new RuntimeException("Invalid field name!");
 		}
 		if (pattern != null)
 			columns.add(new Column(fieldName, displayName, pattern));
@@ -271,16 +271,16 @@ public class DataViwer extends Composite {
 		if (!fieldName.contains(".")){
 			Field field = getField(fieldName, object.getClass());
 			if (field == null)
-				throw new UnsupportedOperationException("Invalid field name!");
+				throw new RuntimeException("Invalid field name!");
 			Object data = get(field, object);
 			return data;
 		}else{
 			String[] fnp = fieldName.split("[.]");
 			if (fnp.length < 2)
-				throw new UnsupportedOperationException("Invalid field name!");
+				throw new RuntimeException("Invalid field name!");
 			Field fk = getField(fnp[0], object.getClass());
 			if (fk == null)
-				throw new UnsupportedOperationException("Invalid field name!");
+				throw new RuntimeException("Invalid field name!");
 			Object fkObject = get(fk, object);
 			StringBuilder builder = new StringBuilder();
 			for (int i = 1; i < fnp.length; i++){
@@ -354,7 +354,7 @@ public class DataViwer extends Composite {
 			else{
 				String[] sp = pattern.split(":");
 				if (sp.length != 2)
-					throw new UnsupportedOperationException("Invalid pattern!");
+					throw new RuntimeException("Invalid pattern!");
 				return b ? sp[0] : sp[1];
 			}
 		}
@@ -363,12 +363,17 @@ public class DataViwer extends Composite {
 
 	public void addListener(int eventType, Listener listener){
 		table.addListener(eventType, listener);
+		
 	}
 
 	public void removeListener(int eventType, Listener listener){
 		table.removeListener(eventType, listener);
 	}
 
+	public boolean isEmpty(){
+		return data == null || data.size() == 0;
+	}
+	
 	class Column{
 		String fieldName;
 		String displayName;
