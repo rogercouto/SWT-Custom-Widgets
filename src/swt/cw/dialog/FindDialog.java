@@ -311,5 +311,9 @@ public class FindDialog extends Dialog {
 	public void setFindText(String text){
 		this.text.setText(text);
 	}
+
+	public void setWidth(int columnIndex, int width) {
+		table.setWidth(columnIndex, width);
+	}
 	
 }
