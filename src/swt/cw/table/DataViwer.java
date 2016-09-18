@@ -271,7 +271,7 @@ public class DataViwer extends Composite {
 		if (!fieldName.contains(".")){
 			Field field = getField(fieldName, object.getClass());
 			if (field == null)
-				throw new RuntimeException("Invalid field name!");
+				throw new RuntimeException("Invalid field name("+fieldName+")!");
 			Object data = get(field, object);
 			return data;
 		}else{
@@ -363,7 +363,6 @@ public class DataViwer extends Composite {
 
 	public void addListener(int eventType, Listener listener){
 		table.addListener(eventType, listener);
-		
 	}
 
 	public void removeListener(int eventType, Listener listener){
