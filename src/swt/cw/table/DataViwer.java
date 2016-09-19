@@ -45,9 +45,9 @@ public class DataViwer extends Composite {
 	 * @param style
 	 */
 	public DataViwer(Composite parent, int style) {
-		super(parent, style);
+		super(parent, SWT.NONE);
 		setLayout(new FillLayout(SWT.HORIZONTAL));
-		table = new Table(this, SWT.FULL_SELECTION);
+		table = new Table(this, style | SWT.FULL_SELECTION);
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 		createListeners();
@@ -369,8 +369,34 @@ public class DataViwer extends Composite {
 		table.removeListener(eventType, listener);
 	}
 
+	public int getCheckedCount(){
+		int count = 0;
+		TableItem[] items = table.getItems();
+		for (TableItem item : items) {
+			if (item.getChecked())
+				count++;
+		}
+		return count;
+	}
+	
+	public List<?> getCheckedItems(){
+		TableItem[] items = table.getItems();
+		List<Object> list = new ArrayList<>();
+		for (int i = 0; i < items.length; i++) {
+			if (items[i].getChecked())
+				list.add(data.get(i));
+		}
+		return list;
+	}
+	
 	public boolean isEmpty(){
 		return data == null || data.size() == 0;
+	}
+	
+	public int getItemCount(){
+		if (data != null)
+			return data.size();
+		return 0;
 	}
 	
 	class Column{

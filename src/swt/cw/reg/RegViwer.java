@@ -111,8 +111,8 @@ public class RegViwer extends Composite {
 		lblBusca.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblBusca.setText(" Busca:");
 		text = new Text(this, SWT.BORDER);
-		GridData gd_text = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-		gd_text.widthHint = 150;
+		GridData gd_text = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+		gd_text.widthHint = 160;
 		text.setLayoutData(gd_text);
 		toolBar = new ToolBar(this, SWT.FLAT | SWT.RIGHT);
 		btnFind = new ToolItem(toolBar, SWT.DROP_DOWN);
